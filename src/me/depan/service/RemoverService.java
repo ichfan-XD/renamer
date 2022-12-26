@@ -34,7 +34,8 @@ public class RemoverService {
 		for(int i = 0; i < text.length();i++) {
 			char theChar = text.charAt(i);
 			if(theChar == '[' && openBracket == null) {
-				openBracket = i;
+				openBracket = i; 
+				
 			}else if(theChar == ']' && closedBracket == null) {
 				closedBracket = i+1;
 			}

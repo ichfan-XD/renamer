@@ -1,20 +1,6 @@
 package me.depan.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-
-import me.depan.guiresponse.ComponentResponsiveStyle;
-import me.depan.model.SubSortingModel;
-import me.depan.model.SortingModel;
-
 import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +9,18 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import me.depan.guiresponse.ComponentResponsiveStyle;
+import me.depan.model.SortingModel;
+import me.depan.model.SubSortingModel;
 
 public class SorterPage extends JPanel {
 	
@@ -38,11 +36,10 @@ public class SorterPage extends JPanel {
 	public JTable tableList;
 	public JTable tableSorted;
 	
-	private List<SortingModel> sortingListOfFiles = new ArrayList<>();
-	private List<String> mainSortingListOfFiles = new ArrayList<>();
-	private List<SubSortingModel> subSortingListOfFiles = new ArrayList<>();
+	private List<SortingModel> listOfUnorganizeFiles = new ArrayList<>();
+	private List<String> listOfMainListingFolder = new ArrayList<>();
+	private List<SubSortingModel> listOfSubListingFolder = new ArrayList<>();
 	private File[] rawListOfSortingFiles;
-	private File[] rawListOfListingFiles;
 	private String sourceSortingPath;
 	private String sourceListingPath;
 	
@@ -145,11 +142,12 @@ public class SorterPage extends JPanel {
 		sourceSortingPath = inputSortingPath.getText();
 		sourceListingPath = inputListPath.getText();
 		if(sourceSortingPath != null && sourceListingPath != null) {
-			if(sortingListOfFiles.size() > 0) sortingListOfFiles = new ArrayList<>();;
-			if(mainSortingListOfFiles.size() > 0) mainSortingListOfFiles = new ArrayList<>();;
-			getListOfSortingFiles();
-			getListOfMainListingFiles();
-			testSubList();
+			if(listOfUnorganizeFiles.size() > 0) listOfUnorganizeFiles = new ArrayList<>();;
+			if(listOfMainListingFolder.size() > 0) listOfMainListingFolder = new ArrayList<>();;
+			getListOfUnorganizeFiles();
+			getListOfMainListingFolder();
+			sortingTheFile();
+//			testSubList();
 //			appendListForOldTable();
 //			cutTheGroupsName();
 		}
@@ -158,56 +156,80 @@ public class SorterPage extends JPanel {
 		}
 	}
 	
-	private void getListOfSortingFiles() {
+	private void getListOfUnorganizeFiles() {
 		File folder = new File(sourceSortingPath);
 		rawListOfSortingFiles = folder.listFiles();	
 		for (int i = 0; i < rawListOfSortingFiles.length; i++) {
 			SortingModel data = new SortingModel();
 			data.setOldPath(rawListOfSortingFiles[i].getName());
-			this.sortingListOfFiles.add(data);
+			data.setArtistName(getTheArtist(rawListOfSortingFiles[i].getName()));
+			this.listOfUnorganizeFiles.add(data);
 		}		
 	}
 	
-	private void getListOfMainListingFiles() {
+	private void getListOfMainListingFolder() {
 		File folder = new File(sourceListingPath);
-		rawListOfListingFiles = folder.listFiles();	
+		File[] rawListOfListingFiles = folder.listFiles();	
 		for (int i = 0; i < rawListOfListingFiles.length; i++) {
-			getListOfSubListingFiles(rawListOfListingFiles[i].getName());
-			this.mainSortingListOfFiles.add(rawListOfListingFiles[i].getName());
+			getListOfSubListingFolder(rawListOfListingFiles[i].getName());
+			this.listOfMainListingFolder.add(rawListOfListingFiles[i].getName());
 		}		
 	}
 	
-	private void getListOfSubListingFiles(String subname) {
+	private void getListOfSubListingFolder(String subname) {
 		File folder = new File(sourceListingPath+"/"+subname);
 		File[] rawSubListOfListingFiles = folder.listFiles();	
 		for (int i = 0; i < rawSubListOfListingFiles.length; i++) {
 			SubSortingModel data = new SubSortingModel();
 			data.setParentFolder(subname);
-			data.setName(rawSubListOfListingFiles[i].getName());
-			this.subSortingListOfFiles.add(data);
+			data.setName(rawSubListOfListingFiles[i].getName());			
+			this.listOfSubListingFolder.add(data);
 		}	
 	}
 	
+	private String getTheArtist(String name) {
+		String firstChar = String.valueOf(name.charAt(0));
+		String theArtist = "";
+		String[] splitedText;				
+		
+		if(firstChar.equals("[")) {
+			splitedText = name.split(" ");
+			theArtist = splitedText[0];
+			theArtist = theArtist.replace("[", "");
+			theArtist = theArtist.replace("]", "");
+		}
+		
+		return theArtist;
+	}
+	
 	private void sortingTheFile() {
-		for(SortingModel sortingFile : sortingListOfFiles) {
-			for(SubSortingModel listing : subSortingListOfFiles) {
-				
+		int i = 0;
+		for(SortingModel sortingFile : listOfUnorganizeFiles) {
+			int j = 0;
+			for(SubSortingModel listing : listOfSubListingFolder) {
+				System.out.print(i+" - "+j);
+				System.out.println(sortingFile.getArtistName().toLowerCase()+" x "+listing.getName());
+				if(sortingFile.getArtistName().toLowerCase().equals(listing.getName().toLowerCase())) {
+					System.out.println("same");
+				}
+				j++;
 			}
+			i++;
 		}
 	}
 	
 	private void testSubList() {
-		for(SubSortingModel data:subSortingListOfFiles) {
-			System.out.println(data.getParentFolder()+" "+data.getName());
+		for(SortingModel data:listOfUnorganizeFiles) {
+			System.out.println(data.getArtistName()+" "+data.getOldPath());
 		}
 	}
 	
 	
 	private void appendListForSortingTable() {
-		Object[][] model = new Object[sortingListOfFiles.size()][];
+		Object[][] model = new Object[listOfUnorganizeFiles.size()][];
 		
-		for(int i = 0; i < sortingListOfFiles.size(); i++) {
-			Object[] data = {(i+1),sortingListOfFiles.get(i).getOldPath(),sortingListOfFiles.get(i).getNewPath()};
+		for(int i = 0; i < listOfUnorganizeFiles.size(); i++) {
+			Object[] data = {(i+1),listOfUnorganizeFiles.get(i).getOldPath(),listOfUnorganizeFiles.get(i).getNewPath()};
 			model[i] = data;
 		}
 		

@@ -1,6 +1,7 @@
 package me.depan.model;
 
 public class SortingModel {
+	private String artistName;
 	private String oldPath;
 	private String newPath;
 	public String getOldPath() {
@@ -14,5 +15,11 @@ public class SortingModel {
 	}
 	public void setNewPath(String newPath) {
 		this.newPath = newPath;
+	}
+	public String getArtistName() {
+		return artistName;
+	}
+	public void setArtistName(String artistName) {
+		this.artistName = artistName;
 	}
 }
