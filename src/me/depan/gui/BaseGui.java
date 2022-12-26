@@ -42,7 +42,7 @@ public class BaseGui extends JFrame implements JFrameDepan{
 	public BaseGui() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(50, 50, 600, 400);
-		setMinimumSize(new Dimension(450,300));
+		setMinimumSize(new Dimension(900,300));
 		
 		contentPane = new JPanel();
 		contentPane.setForeground(new Color(255, 255, 255));
@@ -90,24 +90,10 @@ public class BaseGui extends JFrame implements JFrameDepan{
 			public void componentResized(ComponentEvent e) {								
 				panelSideBar.setSize(new Dimension(panelSideBar.getWidth(),getHeight()));
 				panelContent.setSize(new Dimension(getWidth()-panelSideBar.getWidth(),getHeight()));
-				reactToFrameSize(panelContent, pages);
-//				frameHeight = getHeight();
-//				frameWidth = getWidth();
-//				int fullWidht = getWidth();
-//				int sideBarWidth = panel.getWidth();
-//				panel.setSize(new Dimension(panel.getWidth(),getHeight()));
-//				panel_1.setSize(new Dimension(fullWidht-sideBarWidth,getHeight()));
-//				scrollPane_1.setBounds(10, 150, ((panel_1.getWidth()/2)-25), (getHeight()-200));
-//				scrollPane_2.setBounds(((panel_1.getWidth()/2)), 150, ((panel_1.getWidth()/2)-25), (getHeight()-200));
+				reactToFrameSize(panelContent, pages);				
 				super.componentResized(e);
 			}
 		});
-		
-//		btnNewButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				reverse1();
-//			}
-//		});
 		
 		btnNewButton.addActionListener(new ActionListener() {			
 			@Override
@@ -121,24 +107,6 @@ public class BaseGui extends JFrame implements JFrameDepan{
 				activatePages(1, pages);
 			}
 		});
-		
-//		btnNewButton_2.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				sourcePath = textField.getText();
-//        		scanPath();
-//			}
-//		});
-		
-//		btnNewButton_3.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				executeRename();
-//			}
-//		});
-		
-//		buttonResponseSet_1(btnNewButton_1);
-//		buttonResponseSet_1(btnNewButton);
-//		buttonResponseSet_2(btnNewButton_2);
-//		buttonResponseSet_2(btnNewButton_3);
 		
 	}
 	@Override
@@ -168,13 +136,4 @@ public class BaseGui extends JFrame implements JFrameDepan{
 			contentPages[i].setSize(new Dimension(panel.getWidth(),panel.getHeight()));
 		}
 	}
-	
-//	private void reverse1() {
-//		panel_1.setVisible(true);
-//	}
-//	
-//	private void reverse2() {
-//		panel_1.setVisible(false);
-//	}
-
 }
