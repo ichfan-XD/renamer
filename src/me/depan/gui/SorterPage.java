@@ -1,6 +1,8 @@
 package me.depan.gui;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import java.awt.Color;
@@ -15,6 +17,10 @@ public class SorterPage extends JPanel {
 	public JLabel textListPath;
 	public JTextField inputSortingPath;
 	public JTextField inputListPath;
+	public JScrollPane scrollPaneList;
+	public JScrollPane scrollPaneSorted;
+	public JTable tableList;
+	public JTable tableSorted;
 	
 	private String[] mainTheme;
 	
@@ -56,11 +62,33 @@ public class SorterPage extends JPanel {
 		inputListPath.setBounds(10, 148, 232, 26);
 		inputListPath.setColumns(10);
 		
+		scrollPaneList = new JScrollPane();
+		scrollPaneList.setBounds(10, 208, ((getWidth()/2)-25), (getHeight()-200));
+		
+		scrollPaneSorted = new JScrollPane();
+		scrollPaneSorted.setBounds(((getWidth()/2)), 208, ((getWidth()/2)-25), (getHeight()-200));
+		
+		tableList = new JTable();
+		tableList.setShowHorizontalLines(true);
+        tableList.setFillsViewportHeight(true);
+		tableList.setShowGrid(true);
+        tableList.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPaneList.setViewportView(tableList);
+		
+		tableSorted = new JTable();
+		tableSorted.setShowHorizontalLines(true);
+        tableSorted.setFillsViewportHeight(true);
+		tableSorted.setShowGrid(true);
+        tableSorted.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPaneSorted.setViewportView(tableSorted);
+		
 		add(textTitle);
 		add(textSortingPath);
 		add(textListPath);
 		add(inputSortingPath);
 		add(inputListPath);
+		add(scrollPaneList);
+		add(scrollPaneSorted);
 	}
 	
 }
