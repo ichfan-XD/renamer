@@ -1,6 +1,6 @@
 package me.depan.service;
 
-public class RemoverService {
+public class RenamerService {
 	
 	public String foundParenthesis(String text) {
 		String afterCut = null;

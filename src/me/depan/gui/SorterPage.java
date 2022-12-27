@@ -63,30 +63,30 @@ public class SorterPage extends JPanel {
 		textTitle.setFont(new Font("Arial", Font.BOLD, 17));
 		textTitle.setBounds(10, 11, 112, 21);
 		
-		textSortingPath = new JLabel("Path :");
+		textSortingPath = new JLabel("Files Path");
 		textSortingPath.setFont(new Font("Arial", Font.BOLD, 14));
 		textSortingPath.setForeground(Color.decode(mainTheme[1]));
-		textSortingPath.setBounds(10, 54, 50, 14);
+		textSortingPath.setBounds(10, 54, 200, 14);
 		
-		textListPath = new JLabel("List Path :");
+		textListPath = new JLabel("List Path");
 		textListPath.setFont(new Font("Arial", Font.BOLD, 14));
 		textListPath.setForeground(Color.decode(mainTheme[1]));
-		textListPath.setBounds(10, 123, 232, 14);
+		textListPath.setBounds(10, 123, 200, 14);
 		
 		inputSortingPath = new JTextField();
-		inputSortingPath.setForeground(Color.decode(mainTheme[1]));
+		inputSortingPath.setForeground(Color.decode(mainTheme[2]));
 		inputSortingPath.setFont(new Font("Arial", Font.PLAIN, 17));
 		inputSortingPath.setBounds(10, 79, 232, 26);
 		inputSortingPath.setColumns(10);
 		
 		inputListPath = new JTextField();
-		inputListPath.setForeground(Color.decode(mainTheme[1]));
+		inputListPath.setForeground(Color.decode(mainTheme[2]));
 		inputListPath.setFont(new Font("Arial", Font.PLAIN, 17));
 		inputListPath.setBounds(10, 148, 232, 26);
 		inputListPath.setColumns(10);
 		
 		btnScan = new JButton("s c a n");
-		btnScan.setBounds(307, 90, 100, 30);
+		btnScan.setBounds(260, 146, 100, 30);
 		crs.buttonSet_2(btnScan);
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -95,7 +95,7 @@ public class SorterPage extends JPanel {
 		});
 		
 		btnExecute = new JButton("e x e c u t e");
-		btnExecute.setBounds(347, 148, 100, 30);
+		btnExecute.setBounds(370, 146, 100, 30);
 		crs.buttonSet_2(btnExecute);
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -147,16 +147,14 @@ public class SorterPage extends JPanel {
 		sourceSortingPath = inputSortingPath.getText();
 		sourceListingPath = inputListPath.getText();
 		if(sourceSortingPath != null && sourceListingPath != null) {
-			if(listOfUnorganizeFiles.size() > 0) listOfUnorganizeFiles = new ArrayList<>();;
-			if(listOfMainListingFolder.size() > 0) listOfMainListingFolder = new ArrayList<>();;
+			if(listOfUnorganizeFiles.size() > 0) listOfUnorganizeFiles = new ArrayList<>();
+			if(listOfMainListingFolder.size() > 0) listOfMainListingFolder = new ArrayList<>();
+			if(listOfSubListingFolder.size() > 0) listOfSubListingFolder = new ArrayList<>();
 			getListOfUnorganizeFiles();
 			getListOfMainListingFolder();
 			sortingTheFile();
 			appendListForListingTable();
 			appendListForUnorganizeTable();
-//			testSubList();
-//			appendListForOldTable();
-//			cutTheGroupsName();
 		}
 		else {
 			System.out.println("empty");
@@ -168,7 +166,7 @@ public class SorterPage extends JPanel {
 		rawListOfSortingFiles = folder.listFiles();	
 		for (int i = 0; i < rawListOfSortingFiles.length; i++) {
 			SortingModel data = new SortingModel();
-			data.setOldPath(rawListOfSortingFiles[i].getName());
+			data.setName(rawListOfSortingFiles[i].getName());
 			data.setArtistName(getTheArtist(rawListOfSortingFiles[i].getName()));
 			this.listOfUnorganizeFiles.add(data);
 		}		
@@ -227,7 +225,7 @@ public class SorterPage extends JPanel {
 	
 	private void testSubList() {
 		for(SortingModel data:listOfUnorganizeFiles) {
-			System.out.println(data.getArtistName()+" "+data.getOldPath());
+			System.out.println(data.getArtistName()+" "+data.getName());
 		}
 	}
 	
@@ -238,15 +236,15 @@ public class SorterPage extends JPanel {
 		for(int i = 0; i < listOfUnorganizeFiles.size(); i++) {
 			Object[] data = {
 					(i+1),
-					listOfUnorganizeFiles.get(i).getOldPath(),
-					listOfUnorganizeFiles.get(i).getNewPath(),
+					listOfUnorganizeFiles.get(i).getStatus(),
+					listOfUnorganizeFiles.get(i).getName(),
 					listOfUnorganizeFiles.get(i).getMainFolder(),
 					listOfUnorganizeFiles.get(i).getSubFolder(),
 			};
 			model[i] = data;
 		}
 		
-		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Old Path","New Path","Main","SUB"}));
+		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Status","Name","Main","Sub"}));
 		tableSorted.getColumnModel().getColumn(0).setMaxWidth(35);
 		tableSorted.getColumnModel().getColumn(1).setMinWidth(90);
 		tableSorted.getColumnModel().getColumn(2).setMinWidth(90);
@@ -266,6 +264,7 @@ public class SorterPage extends JPanel {
 		tableList.getColumnModel().getColumn(0).setMaxWidth(35);
 		tableList.getColumnModel().getColumn(1).setMinWidth(300);
 	}
+
 	
 	private void executeSorting() {
 		for(int i = 0; i < rawListOfSortingFiles.length;i++) {
@@ -273,12 +272,16 @@ public class SorterPage extends JPanel {
 				String newNameWithPath = sourceListingPath+"\\";
 				newNameWithPath += listOfUnorganizeFiles.get(i).getMainFolder()+"\\";
 				newNameWithPath += listOfUnorganizeFiles.get(i).getSubFolder()+"\\";
-				newNameWithPath += listOfUnorganizeFiles.get(i).getOldPath();
+				newNameWithPath += listOfUnorganizeFiles.get(i).getName();
 				
 				System.out.println(newNameWithPath);				
 				File newName = new File(newNameWithPath);
-				rawListOfSortingFiles[i].renameTo(newName);
-//				if(!rawListOfFiles[i].getName().equals(newNameWithPath)) rawListOfFiles[i].renameTo(newName);
+				boolean res = rawListOfSortingFiles[i].renameTo(newName);
+				
+				if(res) listOfUnorganizeFiles.get(i).setStatus("sukses");
+				else listOfUnorganizeFiles.get(i).setStatus("gagal");
+				
+				appendListForUnorganizeTable();				
 			}					
 		}
 	}

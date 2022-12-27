@@ -4,20 +4,9 @@ public class SortingModel {
 	private String artistName;
 	private String mainFolder;
 	private String subFolder;
-	private String oldPath;
-	private String newPath;
-	public String getOldPath() {
-		return oldPath;
-	}
-	public void setOldPath(String oldPath) {
-		this.oldPath = oldPath;
-	}
-	public String getNewPath() {
-		return newPath;
-	}
-	public void setNewPath(String newPath) {
-		this.newPath = newPath;
-	}
+	private String name;
+	private String status;
+	
 	public String getArtistName() {
 		return artistName;
 	}
@@ -35,5 +24,17 @@ public class SortingModel {
 	}
 	public void setSubFolder(String subFolder) {
 		this.subFolder = subFolder;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

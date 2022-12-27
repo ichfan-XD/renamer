@@ -9,8 +9,9 @@ import javax.swing.table.DefaultTableModel;
 import me.depan.TestResponse;
 import me.depan.guiresponse.ButtonResponseStyle;
 import me.depan.guiresponse.ComponentResponsiveStyle;
+import me.depan.model.RenamerModel;
 import me.depan.service.PretierService;
-import me.depan.service.RemoverService;
+import me.depan.service.RenamerService;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,14 +39,14 @@ public class RenamerPage extends JPanel {
 	public JTable tableOld;
 	public JTable tableModified;
 	
-	private List<String> oldListOfFiles = new ArrayList<>();
+	private List<RenamerModel> ListOfFiles = new ArrayList<>();
 	private List<String> modifiedListOfFiles = new ArrayList<>();
 	private File[] rawListOfFiles;
 	private String sourcePath;
 	
 	private String[] mainTheme;
 	
-	private RemoverService remover = new RemoverService();
+	private RenamerService remover = new RenamerService();
 	private PretierService pretierService = new PretierService();
 
 	public RenamerPage(String[] theme) {
@@ -66,19 +67,19 @@ public class RenamerPage extends JPanel {
 		title.setFont(new Font("Arial", Font.BOLD, 17));
 		title.setBounds(10, 11, 112, 21);
 		
-		textPath = new JLabel("Path :");
+		textPath = new JLabel("Files Path");
 		textPath.setFont(new Font("Arial", Font.BOLD, 14));
 		textPath.setForeground(Color.decode(mainTheme[1]));
-		textPath.setBounds(10, 54, 50, 14);
+		textPath.setBounds(10, 54, 200, 14);
 		
 		inputPath = new JTextField();
 		inputPath.setForeground(Color.decode(mainTheme[1]));
 		inputPath.setFont(new Font("Arial", Font.PLAIN, 17));
-		inputPath.setBounds(65, 47, 232, 26);
+		inputPath.setBounds(10, 79, 232, 26);
 		inputPath.setColumns(10);
 		
 		btnScan = new JButton("s c a n");
-		btnScan.setBounds(307, 45, 100, 30);
+		btnScan.setBounds(260, 77, 100, 30);
 		crs.buttonSet_2(btnScan);		
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -87,7 +88,7 @@ public class RenamerPage extends JPanel {
 		});
 		
 		btnExecute = new JButton("e x e c u t e");
-		btnExecute.setBounds(307, 90, 100, 30);
+		btnExecute.setBounds(370, 77, 100, 30);
 		crs.buttonSet_2(btnExecute);
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -97,10 +98,12 @@ public class RenamerPage extends JPanel {
 
 		
 		scrollPaneOld = new JScrollPane();
-		scrollPaneOld.setBounds(10, 150, ((getWidth()/2)-25), (getHeight()-200));
+		scrollPaneOld.setBounds(10, 150, (getWidth()-25), (getHeight()-200));
+//		scrollPaneOld.setBounds(10, 150, ((getWidth()/2)-25), (getHeight()-200));
 		
 		scrollPaneModified = new JScrollPane();
 		scrollPaneModified.setBounds(((getWidth()/2)), 150, ((getWidth()/2)-25), (getHeight()-200));
+		scrollPaneModified.setVisible(false);
 		
 		tableOld = new JTable();
 		tableOld.setShowHorizontalLines(true);
@@ -127,8 +130,8 @@ public class RenamerPage extends JPanel {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				scrollPaneOld.setBounds(10, 150, ((getWidth()/2)-25), (getHeight()-200));
-				scrollPaneModified.setBounds(((getWidth()/2)), 150, ((getWidth()/2)-25), (getHeight()-200));
+				scrollPaneOld.setBounds(10, 150, (getWidth()-37), (getHeight()-200));
+//				scrollPaneModified.setBounds(((getWidth()/2)), 150, ((getWidth()/2)-25), (getHeight()-200));
 				super.componentResized(e);
 			}
 		});
@@ -138,7 +141,7 @@ public class RenamerPage extends JPanel {
 	private void scanPath() {	
 		sourcePath = inputPath.getText();
 		if(sourcePath != null) {
-			if(oldListOfFiles.size() > 0) oldListOfFiles = new ArrayList<>();;
+			if(ListOfFiles.size() > 0) ListOfFiles = new ArrayList<>();;
 			if(modifiedListOfFiles.size() > 0) modifiedListOfFiles = new ArrayList<>();;
 			getListOfFiles();
 			appendListForOldTable();
@@ -153,43 +156,53 @@ public class RenamerPage extends JPanel {
 		File folder = new File(sourcePath);
 		rawListOfFiles = folder.listFiles();	
 		for (int i = 0; i < rawListOfFiles.length; i++) {
-			this.oldListOfFiles.add(rawListOfFiles[i].getName());
+			RenamerModel data = new RenamerModel();
+			data.setOldName(rawListOfFiles[i].getName());
+			this.ListOfFiles.add(data);
 		}		
 	}
 	
 	private void cutTheGroupsName() {
-		for(int i = 0; i < oldListOfFiles.size(); i++) {
-			String firstChar = String.valueOf(oldListOfFiles.get(i).charAt(0));
+		for(int i = 0; i < ListOfFiles.size(); i++) {
+			String firstChar = String.valueOf(ListOfFiles.get(i).getOldName().charAt(0));
 			if(firstChar.equals("(")) {
-				String result = remover.foundParenthesis(oldListOfFiles.get(i));
-				modifiedListOfFiles.add(result);
+				String result = remover.foundParenthesis(ListOfFiles.get(i).getOldName());
+				ListOfFiles.get(i).setNewName(result);
+//				modifiedListOfFiles.add(result);
 			}else if(firstChar.equals("[")) {				
-				String result = remover.foundOpenBracket(oldListOfFiles.get(i));
-				modifiedListOfFiles.add(result);
+				String result = remover.foundOpenBracket(ListOfFiles.get(i).getOldName());
+				ListOfFiles.get(i).setNewName(result);
+//				modifiedListOfFiles.add(result);
 			}else {
-				String result = remover.underScoreRemover(oldListOfFiles.get(i));
-				modifiedListOfFiles.add(result);
+				String result = remover.underScoreRemover(ListOfFiles.get(i).getOldName());
+				ListOfFiles.get(i).setNewName(result);
+//				modifiedListOfFiles.add(result);
 			}
 		}
 		
 		for(int i = 0; i < modifiedListOfFiles.size(); i++) {
 			String pretied = pretierService.beautify(modifiedListOfFiles.get(i));
 		}
-		
-		appendListForModifiedTable();
+		appendListForOldTable();
+//		appendListForModifiedTable();
 	}
 
 	private void appendListForOldTable() {
-		Object[][] model = new Object[oldListOfFiles.size()][];
+		Object[][] model = new Object[ListOfFiles.size()][];
 		
-		for(int i = 0; i < oldListOfFiles.size(); i++) {
-			Object[] data = {(i+1),oldListOfFiles.get(i)};
+		for(int i = 0; i < ListOfFiles.size(); i++) {
+			Object[] data = {
+					(i+1),
+					ListOfFiles.get(i).getOldName(),
+					ListOfFiles.get(i).getNewName()
+			};
 			model[i] = data;
 		}
 		
-		tableOld.setModel(new DefaultTableModel(model,new String[] {"#","name"}));
+		tableOld.setModel(new DefaultTableModel(model,new String[] {"#","old","new"}));
 		tableOld.getColumnModel().getColumn(0).setMaxWidth(35);
-		tableOld.getColumnModel().getColumn(1).setMinWidth(1200);
+		tableOld.getColumnModel().getColumn(1).setMinWidth(300);
+		tableOld.getColumnModel().getColumn(2).setMinWidth(300);
 	}
 	
 	private void appendListForModifiedTable() {
@@ -211,7 +224,7 @@ public class RenamerPage extends JPanel {
 	
 	private void executeRename() {
 		for(int i = 0; i < rawListOfFiles.length;i++) {
-			String newNameWithPath = sourcePath+"\\"+modifiedListOfFiles.get(i);
+			String newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName();
 			File newName = new File(newNameWithPath);
 			if(!rawListOfFiles[i].getName().equals(newNameWithPath)) rawListOfFiles[i].renameTo(newName);
 		}
