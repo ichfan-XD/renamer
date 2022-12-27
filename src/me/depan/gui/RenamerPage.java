@@ -193,16 +193,18 @@ public class RenamerPage extends JPanel {
 		for(int i = 0; i < ListOfFiles.size(); i++) {
 			Object[] data = {
 					(i+1),
+					ListOfFiles.get(i).getStatus(),
 					ListOfFiles.get(i).getOldName(),
 					ListOfFiles.get(i).getNewName()
 			};
 			model[i] = data;
 		}
 		
-		tableOld.setModel(new DefaultTableModel(model,new String[] {"#","old","new"}));
+		tableOld.setModel(new DefaultTableModel(model,new String[] {"#","Status","Old","New"}));
 		tableOld.getColumnModel().getColumn(0).setMaxWidth(35);
-		tableOld.getColumnModel().getColumn(1).setMinWidth(300);
+		tableOld.getColumnModel().getColumn(1).setMinWidth(50);
 		tableOld.getColumnModel().getColumn(2).setMinWidth(300);
+		tableOld.getColumnModel().getColumn(3).setMinWidth(300);
 	}
 	
 	private void appendListForModifiedTable() {
@@ -226,7 +228,9 @@ public class RenamerPage extends JPanel {
 		for(int i = 0; i < rawListOfFiles.length;i++) {
 			String newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName();
 			File newName = new File(newNameWithPath);
-			if(!rawListOfFiles[i].getName().equals(newNameWithPath)) rawListOfFiles[i].renameTo(newName);
+			boolean res = false;
+			if(!rawListOfFiles[i].getName().equals(newNameWithPath)) res = rawListOfFiles[i].renameTo(newName);
+			if(res) ListOfFiles.get(i).setStatus("sukses");
 		}
 	}
 }
