@@ -2,6 +2,8 @@ package me.depan.model;
 
 public class SortingModel {
 	private String artistName;
+	private String mainFolder;
+	private String subFolder;
 	private String oldPath;
 	private String newPath;
 	public String getOldPath() {
@@ -21,5 +23,17 @@ public class SortingModel {
 	}
 	public void setArtistName(String artistName) {
 		this.artistName = artistName;
+	}
+	public String getMainFolder() {
+		return mainFolder;
+	}
+	public void setMainFolder(String mainFolder) {
+		this.mainFolder = mainFolder;
+	}
+	public String getSubFolder() {
+		return subFolder;
+	}
+	public void setSubFolder(String subFolder) {
+		this.subFolder = subFolder;
 	}
 }

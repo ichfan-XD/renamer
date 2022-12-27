@@ -97,12 +97,17 @@ public class SorterPage extends JPanel {
 		btnExecute = new JButton("e x e c u t e");
 		btnExecute.setBounds(347, 148, 100, 30);
 		crs.buttonSet_2(btnExecute);
+		btnExecute.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				executeSorting();
+			}
+		});
 		
 		scrollPaneList = new JScrollPane();
-		scrollPaneList.setBounds(10, 208, ((getWidth()/2)-25), (getHeight()-200));
+		scrollPaneList.setBounds(((getWidth()/2)), 208, ((getWidth()/2)-25), (getHeight()-200));
 		
 		scrollPaneSorted = new JScrollPane();
-		scrollPaneSorted.setBounds(((getWidth()/2)), 208, ((getWidth()/2)-25), (getHeight()-200));
+		scrollPaneSorted.setBounds(10, 208, ((getWidth()/2)-25), (getHeight()-200));
 		
 		tableList = new JTable();
 		tableList.setShowHorizontalLines(true);
@@ -147,6 +152,8 @@ public class SorterPage extends JPanel {
 			getListOfUnorganizeFiles();
 			getListOfMainListingFolder();
 			sortingTheFile();
+			appendListForListingTable();
+			appendListForUnorganizeTable();
 //			testSubList();
 //			appendListForOldTable();
 //			cutTheGroupsName();
@@ -202,19 +209,19 @@ public class SorterPage extends JPanel {
 		return theArtist;
 	}
 	
-	private void sortingTheFile() {
-		int i = 0;
-		for(SortingModel sortingFile : listOfUnorganizeFiles) {
-			int j = 0;
+	private void sortingTheFile() {		
+		int x = 0;
+		for(int i = 0; i < listOfUnorganizeFiles.size();i++) {	
+			System.out.println(++x);
 			for(SubSortingModel listing : listOfSubListingFolder) {
-				System.out.print(i+" - "+j);
-				System.out.println(sortingFile.getArtistName().toLowerCase()+" x "+listing.getName());
-				if(sortingFile.getArtistName().toLowerCase().equals(listing.getName().toLowerCase())) {
-					System.out.println("same");
-				}
-				j++;
-			}
-			i++;
+				if(listOfUnorganizeFiles.get(i).getArtistName().toLowerCase().equals(listing.getName().toLowerCase())) {
+					String mainFodler = listing.getParentFolder();
+					String subFolder = listing.getName();
+					listOfUnorganizeFiles.get(i).setMainFolder(mainFodler);
+					listOfUnorganizeFiles.get(i).setSubFolder(subFolder);
+					break;
+				}				
+			}			
 		}
 	}
 	
@@ -225,18 +232,55 @@ public class SorterPage extends JPanel {
 	}
 	
 	
-	private void appendListForSortingTable() {
+	private void appendListForUnorganizeTable() {
 		Object[][] model = new Object[listOfUnorganizeFiles.size()][];
 		
 		for(int i = 0; i < listOfUnorganizeFiles.size(); i++) {
-			Object[] data = {(i+1),listOfUnorganizeFiles.get(i).getOldPath(),listOfUnorganizeFiles.get(i).getNewPath()};
+			Object[] data = {
+					(i+1),
+					listOfUnorganizeFiles.get(i).getOldPath(),
+					listOfUnorganizeFiles.get(i).getNewPath(),
+					listOfUnorganizeFiles.get(i).getMainFolder(),
+					listOfUnorganizeFiles.get(i).getSubFolder(),
+			};
 			model[i] = data;
 		}
 		
-		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Old Path","New Path"}));
+		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Old Path","New Path","Main","SUB"}));
 		tableSorted.getColumnModel().getColumn(0).setMaxWidth(35);
-		tableSorted.getColumnModel().getColumn(1).setMinWidth(1200);
-		tableSorted.getColumnModel().getColumn(2).setMinWidth(1200);
+		tableSorted.getColumnModel().getColumn(1).setMinWidth(90);
+		tableSorted.getColumnModel().getColumn(2).setMinWidth(90);
+		tableSorted.getColumnModel().getColumn(3).setMinWidth(90);
+		tableSorted.getColumnModel().getColumn(4).setMinWidth(90);
+	}
+	
+	private void appendListForListingTable() {
+		Object[][] model = new Object[listOfSubListingFolder.size()][];
+		
+		for(int i = 0; i < listOfSubListingFolder.size(); i++) {
+			Object[] data = {(i+1),listOfSubListingFolder.get(i).getName()};
+			model[i] = data;
+		}
+		
+		tableList.setModel(new DefaultTableModel(model,new String[] {"#","Listing"}));
+		tableList.getColumnModel().getColumn(0).setMaxWidth(35);
+		tableList.getColumnModel().getColumn(1).setMinWidth(300);
+	}
+	
+	private void executeSorting() {
+		for(int i = 0; i < rawListOfSortingFiles.length;i++) {
+			if(listOfUnorganizeFiles.get(i).getMainFolder() != null) {
+				String newNameWithPath = sourceListingPath+"\\";
+				newNameWithPath += listOfUnorganizeFiles.get(i).getMainFolder()+"\\";
+				newNameWithPath += listOfUnorganizeFiles.get(i).getSubFolder()+"\\";
+				newNameWithPath += listOfUnorganizeFiles.get(i).getOldPath();
+				
+				System.out.println(newNameWithPath);				
+				File newName = new File(newNameWithPath);
+				rawListOfSortingFiles[i].renameTo(newName);
+//				if(!rawListOfFiles[i].getName().equals(newNameWithPath)) rawListOfFiles[i].renameTo(newName);
+			}					
+		}
 	}
 	
 }

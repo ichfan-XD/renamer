@@ -78,17 +78,23 @@ public class RenamerPage extends JPanel {
 		inputPath.setColumns(10);
 		
 		btnScan = new JButton("s c a n");
+		btnScan.setBounds(307, 45, 100, 30);
+		crs.buttonSet_2(btnScan);		
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				scanPath();
 			}
 		});
-		btnScan.setBounds(307, 45, 100, 30);
-		crs.buttonSet_2(btnScan);		
 		
 		btnExecute = new JButton("e x e c u t e");
 		btnExecute.setBounds(307, 90, 100, 30);
-		crs.buttonSet_2(btnExecute);		
+		crs.buttonSet_2(btnExecute);
+		btnExecute.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				executeRename();
+			}
+		});
+
 		
 		scrollPaneOld = new JScrollPane();
 		scrollPaneOld.setBounds(10, 150, ((getWidth()/2)-25), (getHeight()-200));

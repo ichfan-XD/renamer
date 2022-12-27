@@ -24,6 +24,7 @@ public class RemoverService {
 		if(afterCut.charAt(0) == '[') afterCut = foundOpenBracket(afterCut);
 		else afterCut = text;
 		afterCut = underScoreRemover(afterCut);
+		afterCut = doubleSpaceRemover(afterCut);
 		
 		return afterCut;
 	}
@@ -63,12 +64,17 @@ public class RemoverService {
 		else afterCut = text;
 		
 		afterCut = underScoreRemover(afterCut);
-		
+		afterCut = doubleSpaceRemover(afterCut);
 		return afterCut;
 	}
 	
 	public String underScoreRemover(String text) {		
 		String afterCut = text.replace("_", " ");
+		return afterCut;
+	}
+	
+	public String doubleSpaceRemover(String text) {
+		String afterCut = text.replace("  ", " ");
 		return afterCut;
 	}
 }
