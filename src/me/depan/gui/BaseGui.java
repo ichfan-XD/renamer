@@ -30,14 +30,16 @@ public class BaseGui extends JFrame implements JFrameDepan{
 	
 	private JButton btnNewButton;
 	private JButton btnNewButton_1;
+	private JButton btnNewButton_2;
 	
 	private GuiTheme gTheme = new GuiTheme();
 	private String[] mainTheme = gTheme.getTheme(1);
 	
 	private RenamerPage firstpage = new RenamerPage(mainTheme);
 	private SorterPage secondPage = new SorterPage(mainTheme);
+	private ArtistCounter thirdPage = new ArtistCounter(mainTheme);
 	
-	private JPanel[] pages = new JPanel[]{firstpage,secondPage};
+	private JPanel[] pages = new JPanel[]{firstpage,secondPage,thirdPage};
 		
 	public BaseGui() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -73,9 +75,13 @@ public class BaseGui extends JFrame implements JFrameDepan{
 			
 			btnNewButton_1 = new JButton("s o r t e r");
 			btnNewButton_1.setBounds(10, 60, 140, 36);
+			
+			btnNewButton_2 = new JButton("c o u n t e r");
+			btnNewButton_2.setBounds(10, 110, 140, 36);
 						
 			panelSideBar.add(btnNewButton);
 			panelSideBar.add(btnNewButton_1);
+			panelSideBar.add(btnNewButton_2);
 		
 		contentPane.add(panelSideBar);
 		contentPane.add(panelContent);
@@ -108,12 +114,19 @@ public class BaseGui extends JFrame implements JFrameDepan{
 			}
 		});
 		
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				activatePages(2, pages);
+			}
+		});
+		
 	}
 	@Override
 	public void setResponsive() {
 		ComponentResponsiveStyle responsiveStyle = new ComponentResponsiveStyle(mainTheme);
 		responsiveStyle.buttonSet_1(btnNewButton);		
 		responsiveStyle.buttonSet_1(btnNewButton_1);		
+		responsiveStyle.buttonSet_1(btnNewButton_2);		
 	}
 
 	private void setPagesToPanelContent(JPanel panel,JPanel[] contentPages) {

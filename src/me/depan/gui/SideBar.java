@@ -8,8 +8,6 @@ public class SideBar extends JPanel {
 	
 	public SideBar() {
 		
-		
-
 	}
 
 }

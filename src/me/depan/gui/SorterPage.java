@@ -211,14 +211,7 @@ public class SorterPage extends JPanel {
 				theArtist = name.substring((openBracket+1),(closeBracket));
 				System.out.println(theArtist);
 			}
-		}
-//		if(firstChar.equals("[")) {
-//			splitedText = name.split(" ");
-//			theArtist = splitedText[0];
-//			theArtist = theArtist.replace("[", "");
-//			theArtist = theArtist.replace("]", "");
-//		}
-		
+		}		
 		return theArtist;
 	}
 	
