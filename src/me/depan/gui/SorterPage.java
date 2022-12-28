@@ -195,14 +195,29 @@ public class SorterPage extends JPanel {
 	private String getTheArtist(String name) {
 		String firstChar = String.valueOf(name.charAt(0));
 		String theArtist = "";
-		String[] splitedText;				
+		Integer openBracket = null;
+		Integer closeBracket = null;		
 		
 		if(firstChar.equals("[")) {
-			splitedText = name.split(" ");
-			theArtist = splitedText[0];
-			theArtist = theArtist.replace("[", "");
-			theArtist = theArtist.replace("]", "");
+			openBracket = 0;
+			for(int i = 0; i < name.length();i++) {
+				char theChar = name.charAt(i);
+				if(theChar == ']' && openBracket != null) {
+					closeBracket = i;	
+					break;
+				}
+			}
+			if(openBracket != null && closeBracket != null) {
+				theArtist = name.substring((openBracket+1),(closeBracket));
+				System.out.println(theArtist);
+			}
 		}
+//		if(firstChar.equals("[")) {
+//			splitedText = name.split(" ");
+//			theArtist = splitedText[0];
+//			theArtist = theArtist.replace("[", "");
+//			theArtist = theArtist.replace("]", "");
+//		}
 		
 		return theArtist;
 	}
@@ -210,7 +225,6 @@ public class SorterPage extends JPanel {
 	private void sortingTheFile() {		
 		int x = 0;
 		for(int i = 0; i < listOfUnorganizeFiles.size();i++) {	
-			System.out.println(++x);
 			for(SubSortingModel listing : listOfSubListingFolder) {
 				if(listOfUnorganizeFiles.get(i).getArtistName().toLowerCase().equals(listing.getName().toLowerCase())) {
 					String mainFodler = listing.getParentFolder();
@@ -237,6 +251,7 @@ public class SorterPage extends JPanel {
 			Object[] data = {
 					(i+1),
 					listOfUnorganizeFiles.get(i).getStatus(),
+					listOfUnorganizeFiles.get(i).getArtistName(),
 					listOfUnorganizeFiles.get(i).getName(),
 					listOfUnorganizeFiles.get(i).getMainFolder(),
 					listOfUnorganizeFiles.get(i).getSubFolder(),
@@ -244,12 +259,13 @@ public class SorterPage extends JPanel {
 			model[i] = data;
 		}
 		
-		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Status","Name","Main","Sub"}));
+		tableSorted.setModel(new DefaultTableModel(model,new String[] {"#","Status","Artist","Name","Main","Sub"}));
 		tableSorted.getColumnModel().getColumn(0).setMaxWidth(35);
 		tableSorted.getColumnModel().getColumn(1).setMinWidth(90);
 		tableSorted.getColumnModel().getColumn(2).setMinWidth(90);
 		tableSorted.getColumnModel().getColumn(3).setMinWidth(90);
 		tableSorted.getColumnModel().getColumn(4).setMinWidth(90);
+		tableSorted.getColumnModel().getColumn(5).setMinWidth(90);
 	}
 	
 	private void appendListForListingTable() {
@@ -273,8 +289,7 @@ public class SorterPage extends JPanel {
 				newNameWithPath += listOfUnorganizeFiles.get(i).getMainFolder()+"\\";
 				newNameWithPath += listOfUnorganizeFiles.get(i).getSubFolder()+"\\";
 				newNameWithPath += listOfUnorganizeFiles.get(i).getName();
-				
-				System.out.println(newNameWithPath);				
+								
 				File newName = new File(newNameWithPath);
 				boolean res = rawListOfSortingFiles[i].renameTo(newName);
 				
