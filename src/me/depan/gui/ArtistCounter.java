@@ -178,6 +178,10 @@ public class ArtistCounter extends JPanel {
 				}
 				
 				listOfUnorganizeMangas.add(dataManga);
+			}else {
+				System.out.println(nameFile);
+				OrganizeNewMangaModel dataManga = new OrganizeNewMangaModel();
+				listOfUnorganizeMangas.add(dataManga);
 			}
 			
 		}		
@@ -226,7 +230,6 @@ public class ArtistCounter extends JPanel {
 	private void organizing() {
 		String path = utilService.normalizePath(sourcePath);
 		path += "_result\\";
-//		utilService.createFolder(path);
 		
 		for(int i = 0; i < listOfCountedArtist.size(); i++) {
 			String theArtist = listOfCountedArtist.get(i).getArtist();
@@ -240,32 +243,46 @@ public class ArtistCounter extends JPanel {
 				}
 			}
 		}
+		System.out.println("raw list " + rawListOfFiles.length);
+		System.out.println("list of counted artist " + listOfCountedArtist.size());
+		System.out.println("unorganize mangas "+listOfUnorganizeMangas.size());
+		
+		
 		
 		appendListForMangaTable();
 	}
 	
 	private void executeOrganizing() {
-		String path = utilService.normalizePath(sourcePath);
-		path += "_result\\";		
-		utilService.createFolder(path);
-		
-		for(int i = 0; i < listOfCountedArtist.size(); i++) {
-			if(listOfCountedArtist.get(i).getCount()>1) {
-				String newPath = path+listOfCountedArtist.get(i).getArtist()+"\\";
-				utilService.createFolder(newPath);				
+		if(rawListOfFiles.length == listOfUnorganizeMangas.size()) {
+			String path = utilService.normalizePath(sourcePath);
+			path += "_result\\";		
+			utilService.createFolder(path,path);
+			
+			for(int i = 0; i < listOfCountedArtist.size(); i++) {
+				if(listOfCountedArtist.get(i).getCount()>1) {
+					String newPath = path+listOfCountedArtist.get(i).getArtist()+"\\";
+					utilService.createFolder(newPath,listOfCountedArtist.get(i).getArtist());				
+				}
+			}
+			System.out.println(rawListOfFiles.length);
+			System.out.println(listOfUnorganizeMangas.size());
+			
+			for(int j = 0; j < listOfUnorganizeMangas.size();j++) {
+				if(listOfUnorganizeMangas.get(j).getNewPath() != null) {				
+					File newName = new File(listOfUnorganizeMangas.get(j).getNewPath());
+					System.out.println(listOfUnorganizeMangas.get(j).getArtist()+" "+listOfUnorganizeMangas.get(j).getNewPath());
+					boolean res = rawListOfFiles[j].renameTo(newName);
+//					if(!rawListOfFiles[i].getName().equals(newNameWithPath)) res = rawListOfFiles[i].renameTo(newName);
+					if(res) listOfUnorganizeMangas.get(j).setStatus("sukses");
+					else listOfUnorganizeMangas.get(j).setStatus("gagal");				
+				}
+				appendListForMangaTable();
 			}
 		}
-		
-		for(int j = 0; j < rawListOfFiles.length;j++) {
-			if(listOfUnorganizeMangas.get(j).getNewPath() != null) {				
-				File newName = new File(listOfUnorganizeMangas.get(j).getNewPath());
-				boolean res = rawListOfFiles[j].renameTo(newName);
-//				if(!rawListOfFiles[i].getName().equals(newNameWithPath)) res = rawListOfFiles[i].renameTo(newName);
-				if(res) listOfUnorganizeMangas.get(j).setStatus("sukses");
-				else listOfUnorganizeMangas.get(j).setStatus("gagal");				
-			}
-			appendListForMangaTable();
+		else {
+			System.out.println("data not match make sure everything is correct");
 		}
+		
 	}
 	
 

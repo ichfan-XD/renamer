@@ -24,13 +24,13 @@ public class UtilService {
 		return newText;
 	}
 	
-	public void createFolder(String path) {
+	public void createFolder(String path, String folderName) {
 		if(path != "" || path != null) {
 //			String newPath = normalizePath(path);			
 			File newFolder = new File(path);
 			boolean res = newFolder.mkdir();
 			if(res) System.out.println("berhasil membuat folder");
-			else System.out.println("gagal membuat folder");
+			else System.out.println("gagal membuat folder "+folderName);
 		}
 	}
 }

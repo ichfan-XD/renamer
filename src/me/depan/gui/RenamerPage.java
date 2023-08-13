@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JTextArea;
 
 public class RenamerPage extends JPanel {
 	
@@ -38,6 +39,7 @@ public class RenamerPage extends JPanel {
 	public JScrollPane scrollPaneModified;
 	public JTable tableOld;
 	public JTable tableModified;
+	public JTextArea errorLog; 
 	
 	private List<RenamerModel> ListOfFiles = new ArrayList<>();
 	private List<String> modifiedListOfFiles = new ArrayList<>();
@@ -119,6 +121,10 @@ public class RenamerPage extends JPanel {
         tableModified.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneModified.setViewportView(tableModified);
 		
+		errorLog = new JTextArea();
+		errorLog.setBounds(10, 261, 5, 22);
+		errorLog.setEditable(false);
+		
 		add(title);
 		add(textPath);
 		add(inputPath);
@@ -126,11 +132,13 @@ public class RenamerPage extends JPanel {
 		add(btnExecute);
 		add(scrollPaneOld);
 		add(scrollPaneModified);
+		add(errorLog);
 		
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				scrollPaneOld.setBounds(10, 150, (getWidth()-37), (getHeight()-200));
+				scrollPaneOld.setBounds(10, 150, (getWidth()-37), (getHeight()-250));
+				errorLog.setBounds(10, (150+scrollPaneOld.getHeight()+10), (getWidth()-37), 40);
 //				scrollPaneModified.setBounds(((getWidth()/2)), 150, ((getWidth()/2)-25), (getHeight()-200));
 				super.componentResized(e);
 			}
@@ -164,19 +172,27 @@ public class RenamerPage extends JPanel {
 	
 	private void cutTheGroupsName() {
 		for(int i = 0; i < ListOfFiles.size(); i++) {
-			String firstChar = String.valueOf(ListOfFiles.get(i).getOldName().charAt(0));
+			String result = ListOfFiles.get(i).getOldName();
+			String firstChar = String.valueOf(result.charAt(0));
 			if(firstChar.equals("(")) {
-				String result = remover.foundParenthesis(ListOfFiles.get(i).getOldName());
+				try {
+					result = remover.foundParenthesis(ListOfFiles.get(i).getOldName());
+				}catch(Exception e) {
+					
+				}
 				ListOfFiles.get(i).setNewName(result);
-//				modifiedListOfFiles.add(result);
-			}else if(firstChar.equals("[")) {				
-				String result = remover.foundOpenBracket(ListOfFiles.get(i).getOldName());
+			}else if(firstChar.equals("[")) {
+				try{
+					result = remover.foundOpenBracket(ListOfFiles.get(i).getOldName());
+				}catch(Exception e){
+					String breakLine = "\n";
+					errorLog.append(ListOfFiles.get(i).getOldName() + breakLine);
+				}
 				ListOfFiles.get(i).setNewName(result);
-//				modifiedListOfFiles.add(result);
-			}else {
-				String result = remover.underScoreRemover(ListOfFiles.get(i).getOldName());
+			}
+			else {
+				result = remover.underScoreRemover(ListOfFiles.get(i).getOldName());
 				ListOfFiles.get(i).setNewName(result);
-//				modifiedListOfFiles.add(result);
 			}
 		}
 		
@@ -184,7 +200,6 @@ public class RenamerPage extends JPanel {
 			String pretied = pretierService.beautify(modifiedListOfFiles.get(i));
 		}
 		appendListForOldTable();
-//		appendListForModifiedTable();
 	}
 
 	private void appendListForOldTable() {
