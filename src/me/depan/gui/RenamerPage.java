@@ -186,9 +186,9 @@ public class RenamerPage extends JPanel {
 //----------------------------------------------------------------------------- end fixing
 		}
 		
-		for(int i = 0; i < modifiedListOfFiles.size(); i++) {
-			String pretied = pretierService.beautify(modifiedListOfFiles.get(i));
-		}
+//		for(int i = 0; i < modifiedListOfFiles.size(); i++) {
+//			String pretied = pretierService.beautify(modifiedListOfFiles.get(i));
+//		}
 		appendListForOldTable();
 	}
 

@@ -1,5 +1,7 @@
 package me.depan.service;
 
+import java.util.Objects;
+
 public class RenamerService {
 	
 	private Integer parenthesisStart = null,parenthesisEnd = null,bracketStart = null,bracketEnd = null;
@@ -17,12 +19,15 @@ public class RenamerService {
 //		System.out.print(parenthesisEnd);
 //		System.out.print(bracketStart);
 //		System.out.println(bracketEnd);
-		
-		if(parenthesisStart == 0 && parenthesisEnd != null && (bracketStart < parenthesisEnd && bracketEnd < parenthesisEnd)) {
+
+		if(Objects.equals(parenthesisStart, 0) && parenthesisEnd != null) {
+			System.out.println("parenthesis");
 			result = foundParenthesis(input);
-		}else if(bracketStart == 0 && bracketEnd != null && (parenthesisStart > bracketEnd && parenthesisEnd > bracketEnd)) {
+		}else if(Objects.equals(bracketStart, 0) && bracketEnd != null) {
+			System.out.println("bracket");
 //			result = foundOpenBracket(input);
 		}else {
+			System.out.println("not found or different format");
 			result = input;
 		}
 //		if(firstChar.equals("(")) {
@@ -49,8 +54,16 @@ public class RenamerService {
 		return result;
 	}
 	
-	private String foundParenthesis(String text) {
+	private String foundParenthesis(String input) {
 		String afterCut = "",frontName = "",backName = "";
+		if(bracketStart != null && bracketEnd != null) {
+			if(bracketStart > parenthesisStart && bracketEnd < parenthesisEnd) {
+				frontName = input.substring(bracketStart+1,bracketEnd);
+				backName = input.substring(parenthesisEnd+1,input.length());
+				System.out.println(frontName+" - "+backName);
+			}
+		}
+		
 		
 //		Integer parenthesisStart = null,parenthesisEnd = null;
 		
@@ -63,18 +76,18 @@ public class RenamerService {
 //			}
 //		}
 	
-		if(parenthesisStart != null && parenthesisEnd != null) {
-			String theCutText = text.substring(parenthesisStart,parenthesisEnd);
-			afterCut = text.replace(theCutText,"");
-		}
+//		if(parenthesisStart != null && parenthesisEnd != null) {
+//			String theCutText = text.substring(parenthesisStart,parenthesisEnd);
+//			afterCut = text.replace(theCutText,"");
+//		}
+//		
+//		if(afterCut.charAt(0) == ' ') afterCut = afterCut.substring(1);
+//		if(afterCut.charAt(0) == '[') afterCut = foundOpenBracket(afterCut);
+//		else afterCut = text;
+//		afterCut = underScoreRemover(afterCut);
+//		afterCut = doubleSpaceRemover(afterCut);
 		
-		if(afterCut.charAt(0) == ' ') afterCut = afterCut.substring(1);
-		if(afterCut.charAt(0) == '[') afterCut = foundOpenBracket(afterCut);
-		else afterCut = text;
-		afterCut = underScoreRemover(afterCut);
-		afterCut = doubleSpaceRemover(afterCut);
-		
-		return afterCut;
+		return null;
 	}
 	
 	private String foundOpenBracket(String text) {
