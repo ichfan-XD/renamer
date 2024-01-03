@@ -21,7 +21,6 @@ public class OrganizeUnorganizeService {
 			}
 			if(openBracket != null && closeBracket != null) {
 				theArtist = name.substring((openBracket+1),(closeBracket));
-//				System.out.println(theArtist);
 			}
 		}		
 		return theArtist;

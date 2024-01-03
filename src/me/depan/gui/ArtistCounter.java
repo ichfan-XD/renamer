@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -79,7 +80,7 @@ public class ArtistCounter extends JPanel {
 		crs.buttonSet_2(btnScan);		
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				scanPath();
+				start();
 			}
 		});
 		
@@ -88,7 +89,7 @@ public class ArtistCounter extends JPanel {
 		crs.buttonSet_2(btnExecute);		
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				executeOrganizing();
+				execute();
 			}
 		});
 		
@@ -130,19 +131,23 @@ public class ArtistCounter extends JPanel {
 		});
 	}
 	
-	private void scanPath() {	
+	private void start() {	
 		sourcePath = inputPath.getText();		
-		if(sourcePath != null) {
-			if(listOfCountedArtist.size() > 0) listOfCountedArtist = new ArrayList<>();
-			if(listOfUnorganizeMangas.size() > 0) listOfUnorganizeMangas = new ArrayList<>();
-			getListOfFiles();
-			organizing();
-			appendListForArtistTable();
-			appendListForMangaTable();
-//			appendListForUnorganizeTable();
+		if(sourcePath.length()>0) {
+			try {
+				if(listOfCountedArtist.size() > 0) listOfCountedArtist = new ArrayList<>();
+				if(listOfUnorganizeMangas.size() > 0) listOfUnorganizeMangas = new ArrayList<>();
+				getListOfFiles();
+				organizing();
+				appendListForArtistTable();
+				appendListForMangaTable();
+//				appendListForUnorganizeTable();
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null, "file path is doesn't exist or wrong format");
+			}
 		}
 		else {
-			System.out.println("empty");
+			JOptionPane.showMessageDialog(null, "file path empty");
 		}
 	}
 	private void getListOfFiles() {
@@ -252,7 +257,7 @@ public class ArtistCounter extends JPanel {
 		appendListForMangaTable();
 	}
 	
-	private void executeOrganizing() {
+	private void execute() {
 		if(rawListOfFiles.length == listOfUnorganizeMangas.size()) {
 			String path = utilService.normalizePath(sourcePath);
 			path += "_result\\";		

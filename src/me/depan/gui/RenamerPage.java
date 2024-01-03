@@ -12,12 +12,15 @@ import me.depan.guiresponse.ComponentResponsiveStyle;
 import me.depan.model.RenamerModel;
 import me.depan.service.PretierService;
 import me.depan.service.RenamerService;
+import me.depan.service.CollectorService;
 
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -48,8 +51,9 @@ public class RenamerPage extends JPanel {
 	
 	private String[] mainTheme;
 	
-	private RenamerService remover = new RenamerService();
+	private RenamerService renamer = new RenamerService();
 	private PretierService pretierService = new PretierService();
+	private CollectorService collect = new CollectorService();
 
 	public RenamerPage(String[] theme) {
 		setBounds(0,0,600,300);
@@ -85,7 +89,7 @@ public class RenamerPage extends JPanel {
 		crs.buttonSet_2(btnScan);		
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				scanPath();
+				start();
 			}
 		});
 		
@@ -94,7 +98,7 @@ public class RenamerPage extends JPanel {
 		crs.buttonSet_2(btnExecute);
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				executeRename();
+				execute();
 			}
 		});
 
@@ -146,23 +150,26 @@ public class RenamerPage extends JPanel {
 		
 	}
 	
-	private void scanPath() {	
+	private void start() {	
 		sourcePath = inputPath.getText();
-		if(sourcePath != null) {
-			if(ListOfFiles.size() > 0) ListOfFiles = new ArrayList<>();;
-			if(modifiedListOfFiles.size() > 0) modifiedListOfFiles = new ArrayList<>();;
-			getListOfFiles();
+		if(sourcePath.length()>0) {
+			ListOfFiles = new ArrayList<>();;
+			modifiedListOfFiles = new ArrayList<>();
+			try {
+				getData();	
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null, "file path is doesn't exist or wrong format");
+			}
 			appendListForOldTable();
 			cutTheGroupsName();
 		}
 		else {
-			System.out.println("empty");
+			JOptionPane.showMessageDialog(null, "file path empty");
 		}
 	}
 
-	private void getListOfFiles() {
-		File folder = new File(sourcePath);
-		rawListOfFiles = folder.listFiles();	
+	private void getData() {	
+		rawListOfFiles = collect.getFilesList(sourcePath);
 		for (int i = 0; i < rawListOfFiles.length; i++) {
 			RenamerModel data = new RenamerModel();
 			data.setOldName(rawListOfFiles[i].getName());
@@ -173,27 +180,10 @@ public class RenamerPage extends JPanel {
 	private void cutTheGroupsName() {
 		for(int i = 0; i < ListOfFiles.size(); i++) {
 			String result = ListOfFiles.get(i).getOldName();
-			String firstChar = String.valueOf(result.charAt(0));
-			if(firstChar.equals("(")) {
-				try {
-					result = remover.foundParenthesis(ListOfFiles.get(i).getOldName());
-				}catch(Exception e) {
-					
-				}
-				ListOfFiles.get(i).setNewName(result);
-			}else if(firstChar.equals("[")) {
-				try{
-					result = remover.foundOpenBracket(ListOfFiles.get(i).getOldName());
-				}catch(Exception e){
-					String breakLine = "\n";
-					errorLog.append(ListOfFiles.get(i).getOldName() + breakLine);
-				}
-				ListOfFiles.get(i).setNewName(result);
-			}
-			else {
-				result = remover.underScoreRemover(ListOfFiles.get(i).getOldName());
-				ListOfFiles.get(i).setNewName(result);
-			}
+//			String firstChar = String.valueOf(result.charAt(0));
+//----------------------------------------------------------------------------- fixing			
+			result = renamer.renamer(ListOfFiles.get(i).getOldName());
+//----------------------------------------------------------------------------- end fixing
 		}
 		
 		for(int i = 0; i < modifiedListOfFiles.size(); i++) {
@@ -239,7 +229,7 @@ public class RenamerPage extends JPanel {
 		return null;
 	}
 	
-	private void executeRename() {
+	private void execute() {
 		for(int i = 0; i < rawListOfFiles.length;i++) {
 			String newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName();
 			File newName = new File(newNameWithPath);
@@ -247,5 +237,6 @@ public class RenamerPage extends JPanel {
 			if(!rawListOfFiles[i].getName().equals(newNameWithPath)) res = rawListOfFiles[i].renameTo(newName);
 			if(res) ListOfFiles.get(i).setStatus("sukses");
 		}
+		appendListForOldTable();
 	}
 }

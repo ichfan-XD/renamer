@@ -2,19 +2,67 @@ package me.depan.service;
 
 public class RenamerService {
 	
-	public String foundParenthesis(String text) {
-		String afterCut = null;
-		Integer parenthesisStart = null,parenthesisEnd = null;
-		
-		for(int i = 0; i < text.length();i++) {
-			char theChar = text.charAt(i);
-			if(theChar == '(' && parenthesisStart == null) {
-				parenthesisStart = i;
-			}else if(theChar == ')' && parenthesisEnd == null) {
-				parenthesisEnd = i+1;
-			}
+	private Integer parenthesisStart = null,parenthesisEnd = null,bracketStart = null,bracketEnd = null;
+	
+	public String renamer(String input) {
+		String result = "";
+		for(int i = 0; i < input.length();i++) {
+			if(String.valueOf(input.charAt(i)).equals("[") && parenthesisStart == null) parenthesisStart = i;
+			if(String.valueOf(input.charAt(i)).equals("]") && parenthesisEnd == null) parenthesisEnd = i;
+			if(String.valueOf(input.charAt(i)).equals("(") && bracketStart == null) bracketStart = i;
+			if(String.valueOf(input.charAt(i)).equals(")") && bracketEnd == null) bracketEnd = i;
 		}
+		System.out.println(input);
+//		System.out.print(parenthesisStart);
+//		System.out.print(parenthesisEnd);
+//		System.out.print(bracketStart);
+//		System.out.println(bracketEnd);
 		
+		if(parenthesisStart == 0 && parenthesisEnd != null && (bracketStart < parenthesisEnd && bracketEnd < parenthesisEnd)) {
+			result = foundParenthesis(input);
+		}else if(bracketStart == 0 && bracketEnd != null && (parenthesisStart > bracketEnd && parenthesisEnd > bracketEnd)) {
+//			result = foundOpenBracket(input);
+		}else {
+			result = input;
+		}
+//		if(firstChar.equals("(")) {
+//			try {
+//				result = foundParenthesis(input);
+//			}catch(Exception e) {
+//				
+//			}
+//			ListOfFiles.get(i).setNewName(result);
+//		}else if(firstChar.equals("[")) {
+//			try{
+//				result = renamer.foundOpenBracket(ListOfFiles.get(i).getOldName());
+//			}catch(Exception e){
+//				String breakLine = "\n";
+//				errorLog.append(ListOfFiles.get(i).getOldName() + breakLine);
+//			}
+//			ListOfFiles.get(i).setNewName(result);
+//		}
+//		else {
+//			result = renamer.underScoreRemover(ListOfFiles.get(i).getOldName());
+//			ListOfFiles.get(i).setNewName(result);
+//		}
+		resetVariable();
+		return result;
+	}
+	
+	private String foundParenthesis(String text) {
+		String afterCut = "",frontName = "",backName = "";
+		
+//		Integer parenthesisStart = null,parenthesisEnd = null;
+		
+//		for(int i = 0; i < text.length();i++) {
+//			char theChar = text.charAt(i);
+//			if(theChar == '(' && parenthesisStart == null) {
+//				parenthesisStart = i;
+//			}else if(theChar == ')' && parenthesisEnd == null) {
+//				parenthesisEnd = i+1;
+//			}
+//		}
+	
 		if(parenthesisStart != null && parenthesisEnd != null) {
 			String theCutText = text.substring(parenthesisStart,parenthesisEnd);
 			afterCut = text.replace(theCutText,"");
@@ -29,7 +77,7 @@ public class RenamerService {
 		return afterCut;
 	}
 	
-	public String foundOpenBracket(String text) {
+	private String foundOpenBracket(String text) {
 		String afterCut = null,insideBracket = null, outsideBracket = null;
 		Integer openBracket = null,closedBracket = null,parenthesisStart = null,parenthesisEnd = null;
 		for(int i = 0; i < text.length();i++) {
@@ -68,12 +116,19 @@ public class RenamerService {
 		return afterCut;
 	}
 	
-	public String underScoreRemover(String text) {		
+	private void resetVariable() {
+		parenthesisStart = null;
+		parenthesisEnd = null;
+		bracketStart = null;
+		bracketEnd = null;
+	}
+	
+	private String underScoreRemover(String text) {		
 		String afterCut = text.replace("_", " ");
 		return afterCut;
 	}
 	
-	public String doubleSpaceRemover(String text) {
+	private String doubleSpaceRemover(String text) {
 		String afterCut = text.replace("  ", " ");
 		return afterCut;
 	}
