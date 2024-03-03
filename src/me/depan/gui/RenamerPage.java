@@ -163,7 +163,7 @@ public class RenamerPage extends JPanel {
 			ListOfFiles = new ArrayList<>();;
 			modifiedListOfFiles = new ArrayList<>();
 			try {
-				getData();	
+				getData();		
 			}catch(Exception e){
 				JOptionPane.showMessageDialog(null, "file path is doesn't exist or wrong format");
 			}
@@ -189,7 +189,10 @@ public class RenamerPage extends JPanel {
 			String result = null;		
 			result = renamer.renamer(ListOfFiles.get(i).getOldName());
 			if(result != null) ListOfFiles.get(i).setNewName(result);
-			ListOfFiles.get(i).setFormat(format.getTheFormat(ListOfFiles.get(i).getOldName()));
+			
+			ArrayList<String> formater = format.getTheFormat(ListOfFiles.get(i).getNewName());
+			ListOfFiles.get(i).setFormat(formater.get(1));
+			ListOfFiles.get(i).setNewNameWithoutFormat(formater.get(0));
 		}
 		appendListForOldTable();
 	}
@@ -237,20 +240,25 @@ public class RenamerPage extends JPanel {
 		if(rawListOfFiles != null) {
 			for(int i = 0; i < rawListOfFiles.length;i++) {
 				if(ListOfFiles.get(i).getNewName() != null) {
-					String newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName();
-					File newName = new File(newNameWithPath);
-					int series = 2;
 					boolean result = false;
+					String newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName();
+					int series = 2;
 					while (result == false){
 						System.out.println("masuk proses");
+						File newName = new File(newNameWithPath);
 						result = rawListOfFiles[i].renameTo(newName);
 						if(result) {ListOfFiles.get(i).setStatus("sukses");}
 						else {
-							newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName()+" ("+(series++)+")";
-							newName = new File(newNameWithPath);
-							ListOfFiles.get(i).setStatus("sukses");
-							System.out.println("ada nama sama");
-//							ListOfFiles.get(i).setStatus("gagal");
+							if(ListOfFiles.get(i).getNewNameWithoutFormat() != null && ListOfFiles.get(i).getFormat() != null) {
+								System.out.println("ada nama sama");
+								newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewNameWithoutFormat()+"("+(series++)+")"+ListOfFiles.get(i).getFormat();
+								System.out.println(newNameWithPath);
+							}
+							else {
+								System.out.println("ada nama sama");
+								newNameWithPath = sourcePath+"\\"+ListOfFiles.get(i).getNewName()+"("+(series++)+")";
+								System.out.println(newNameWithPath);
+							}
 						}
 					}
 					

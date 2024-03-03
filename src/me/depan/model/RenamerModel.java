@@ -6,6 +6,14 @@ public class RenamerModel {
 	private String status;
 	private Boolean active;
 	private String format;
+	private String newNameWithoutFormat;
+	
+	public String getNewNameWithoutFormat() {
+		return newNameWithoutFormat;
+	}
+	public void setNewNameWithoutFormat(String newNameWithoutFormat) {
+		this.newNameWithoutFormat = newNameWithoutFormat;
+	}
 	public String getOldName() {
 		return oldName;
 	}
